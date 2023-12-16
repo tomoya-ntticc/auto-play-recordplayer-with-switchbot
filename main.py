@@ -34,7 +34,8 @@ def auto_play():
     every().hour.at(":51").do(stop)
 
     # Run once a day.
-    # every().day.at('18:05').do(stop)
+    every().day.at('18:05').do(stop)
+    every().day.at('18:10').do(exit)
 
     while True:
         run_pending()
@@ -56,7 +57,7 @@ def stop():
     initialize_auth()
     logger.info("Stop")
     post_command(bot, on)
-    sleep(4)
+    sleep(4.5)
     post_command(plug, off)
 
 
