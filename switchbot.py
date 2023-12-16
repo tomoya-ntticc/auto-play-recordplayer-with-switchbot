@@ -18,6 +18,7 @@ url = "https://api.switch-bot.com"
 # Declare empty header dictionary
 apiHeader = {}
 
+
 def initialize_auth():
     token = os.getenv("TOKEN")
     secret = os.getenv("SECRET")
@@ -46,7 +47,7 @@ def get_devices():
     logger.debug(pformat(res.json()))
 
 
-def get_statuses(device_id: str):
+def get_status(device_id: str):
     initialize_auth()
     res = requests.get(f"{url}/v1.1/devices/{device_id}/status", headers=apiHeader)
     logger.debug(pformat(res.json()))
