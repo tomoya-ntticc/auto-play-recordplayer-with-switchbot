@@ -24,9 +24,9 @@ def cli():
 @cli.command()
 def auto_play():
     logger.info("Start auto play record player.")
-    get_devices()
+    devices()
 
-    every().minute.at(":30").do(get_status, device_id=plug)
+    every().minute.at(":30").do(status, device_id=plug)
 
     every().hour.at(":00").do(play)
     every().hour.at(":21").do(stop)
@@ -62,6 +62,12 @@ def stop():
 
 
 @cli.command()
+def devices():
+    logger.info("Get devices")
+    get_devices()
+
+
+@cli.command()
 def status():
     logger.info("Get status")
     get_status(plug)
@@ -70,6 +76,8 @@ def status():
 cli.add_command(auto_play)
 cli.add_command(play)
 cli.add_command(stop)
+cli.add_command(devices)
+cli.add_command(status)
 
 
 if __name__ == "__main__":
