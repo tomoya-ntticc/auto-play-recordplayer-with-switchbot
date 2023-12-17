@@ -25,25 +25,24 @@ def cli(ctx):
         auto_play()
 
 
-def auto_play():
-    logger.info("Start auto play record player.")
+@cli.command()
+def devices():
     get_devices()
 
-    every().minute.at(":30").do(get_status, device_id=plug)
 
-    every().hour.at(":00").do(play_record_player)
-    every().hour.at(":21").do(stop_record_player)
-    every().hour.at(":30").do(play_record_player)
-    every().hour.at(":51").do(stop_record_player)
+@cli.command()
+def status():
+    get_status(plug)
 
-    # Run once a day.
-    every().day.at('18:05').do(stop_record_player)
-    every().day.at('18:10').do(exit)
 
-    while True:
-        logger.info("waiting...")
-        run_pending()
-        sleep(1)
+@cli.command()
+def play():
+    play_record_player()
+
+
+@cli.command()
+def stop():
+    stop_record_player()
 
 
 # Control Record Player
@@ -63,24 +62,25 @@ def stop_record_player():
     post_command(plug, off)
 
 
-@cli.command()
-def play():
-    play_record_player()
-
-
-@cli.command()
-def stop():
-    stop_record_player()
-
-
-@cli.command()
-def devices():
+def auto_play():
+    logger.info("Start auto play record player.")
     get_devices()
 
+    every().minute.at(":30").do(get_status, device_id=plug)
 
-@cli.command()
-def status():
-    get_status(plug)
+    every().hour.at(":00").do(play_record_player)
+    every().hour.at(":21").do(stop_record_player)
+    every().hour.at(":30").do(play_record_player)
+    every().hour.at(":51").do(stop_record_player)
+
+    # Run once a day.
+    every().day.at('18:05').do(stop_record_player)
+    every().day.at('18:10').do(exit)
+
+    while True:
+        logger.info("waiting...")
+        run_pending()
+        sleep(1)
 
 
 if __name__ == "__main__":
