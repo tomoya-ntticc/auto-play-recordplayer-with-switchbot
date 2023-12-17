@@ -16,35 +16,38 @@ on = "turnOn"
 off = "turnOff"
 
 
-@click.group()
-def cli():
-    pass
+@click.group(invoke_without_command=True)
+@click.pass_context
+def cli(ctx):
+    if ctx.invoked_subcommand:
+        ctx.invoked_subcommand
+    else:
+        auto_play()
 
 
-@cli.command()
 def auto_play():
     logger.info("Start auto play record player.")
-    devices()
+    get_devices()
 
-    every().minute.at(":30").do(status, device_id=plug)
+    every().minute.at(":30").do(get_status, device_id=plug)
 
-    every().hour.at(":00").do(play)
-    every().hour.at(":21").do(stop)
-    every().hour.at(":30").do(play)
-    every().hour.at(":51").do(stop)
+    every().hour.at(":00").do(play_record_player)
+    every().hour.at(":21").do(stop_record_player)
+    every().hour.at(":30").do(play_record_player)
+    every().hour.at(":51").do(stop_record_player)
 
     # Run once a day.
-    every().day.at('18:05').do(stop)
+    every().day.at('18:05').do(stop_record_player)
     every().day.at('18:10').do(exit)
 
     while True:
+        logger.info("waiting...")
         run_pending()
         sleep(1)
 
 
 # Control Record Player
-@cli.command()
-def play():
+def play_record_player():
     initialize_auth()
     logger.info("Play")
     post_command(plug, on)
@@ -52,8 +55,7 @@ def play():
     post_command(bot, on)
 
 
-@cli.command()
-def stop():
+def stop_record_player():
     initialize_auth()
     logger.info("Stop")
     post_command(bot, on)
@@ -62,22 +64,23 @@ def stop():
 
 
 @cli.command()
+def play():
+    play_record_player()
+
+
+@cli.command()
+def stop():
+    stop_record_player()
+
+
+@cli.command()
 def devices():
-    logger.info("Get devices")
     get_devices()
 
 
 @cli.command()
 def status():
-    logger.info("Get status")
     get_status(plug)
-
-
-cli.add_command(auto_play)
-cli.add_command(play)
-cli.add_command(stop)
-cli.add_command(devices)
-cli.add_command(status)
 
 
 if __name__ == "__main__":

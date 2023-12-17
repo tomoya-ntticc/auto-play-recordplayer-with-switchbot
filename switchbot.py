@@ -43,12 +43,14 @@ def initialize_auth():
 
 def get_devices():
     initialize_auth()
+    logger.info("Get devices")
     res = requests.get(f"{url}/v1.1/devices", headers=apiHeader)
     logger.debug(pformat(res.json()))
 
 
 def get_status(device_id: str):
     initialize_auth()
+    logger.info("Get status")
     res = requests.get(f"{url}/v1.1/devices/{device_id}/status", headers=apiHeader)
     logger.debug(pformat(res.json()))
 
