@@ -23,7 +23,7 @@ def cli(ctx, auto_stop):
     if ctx.invoked_subcommand:
         ctx.invoked_subcommand
     else:
-        auto_play(auto_stop=auto_stop)
+        auto_play(auto_stop)
 
 
 @cli.command()
@@ -74,9 +74,9 @@ def auto_play(auto_stop: bool):
     every().hour.at(":30").do(play_record_player)
     every().hour.at(":51").do(stop_record_player)
 
-    # Run once a day.
     if auto_stop:
-        logger.info("Player will be stopping at 18:05.")
+        logger.info("Operater will be stopping at 18:10.")
+        # Run once a day.
         every().day.at('18:05').do(stop_record_player)
         every().day.at('18:10').do(exit)
 
