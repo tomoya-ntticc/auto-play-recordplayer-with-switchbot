@@ -17,12 +17,13 @@ off = "turnOff"
 
 
 @click.group(invoke_without_command=True)
+@click.option('--auto-stop', is_flag=True)
 @click.pass_context
-def cli(ctx):
+def cli(ctx, auto_stop):
     if ctx.invoked_subcommand:
         ctx.invoked_subcommand
     else:
-        auto_play()
+        auto_play(auto_stop=auto_stop)
 
 
 @cli.command()
@@ -62,7 +63,7 @@ def stop_record_player():
     post_command(plug, off)
 
 
-def auto_play():
+def auto_play(auto_stop: bool):
     logger.info("Start auto play record player.")
     get_devices()
 
@@ -74,8 +75,10 @@ def auto_play():
     every().hour.at(":51").do(stop_record_player)
 
     # Run once a day.
-    every().day.at('18:05').do(stop_record_player)
-    every().day.at('18:10').do(exit)
+    if auto_stop:
+        logger.info("Player will be stopping at 18:05.")
+        every().day.at('18:05').do(stop_record_player)
+        every().day.at('18:10').do(exit)
 
     while True:
         logger.info("waiting...")
